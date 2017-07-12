@@ -1,0 +1,49 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+object SqlServerSparkConnection {
+  
+    val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sqlContext = new SQLContext(sc)
+  def main(args : Array[String]){
+    
+    
+    
+
+ 
+ 
+ 
+/* val jdbcSqlConnStr = "jdbc:sqlserver://10.200.14.151;databaseName=edwnorm;user=nageswara.rao.dasari;password=nag1234$$;"
+ 
+ 
+ val jdbcDbTable = "[dbo].[denormpxsurveyresponseAS]"
+ 
+ val jdbcDF = sqlContext.read.format("jdbc").options(
+Map("url" -&gt; jdbcSqlConnStr,
+"dbtable" -&gt; jdbcDbTable))*/
+   
+   // Testing for the JDBC Driver Class
+Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+
+// Define the credentials and parameters get_sqlserver_creds
+val (user, passwd) = ("nageswara.rao.dasari","")
+val hostname = "example.databricks.sqlserver.com"
+val dbName = "edwnorm"
+val jdbcPort = 1433
+
+val jdbcUrl = (s"jdbc:sqlserver://${hostname}:${jdbcPort};database=${dbName};user=${user};password=${passwd}")
+
+val driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+val connectionProperties = new java.util.Properties()
+connectionProperties.setProperty("Driver",driverClass)
+
+val a = sqlContext.read.jdbc(jdbcUrl, "diamonds_mysql", connectionProperties).explain(true)
+
+
+
+
+ 
+  }
+}

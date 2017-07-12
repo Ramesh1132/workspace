@@ -1,0 +1,36 @@
+package com.nagesh.Spark1
+
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+
+import org.apache.spark.SparkContext
+
+
+
+
+
+object Sample {
+  def main(args : Array[String]){
+   
+
+    val conf = new SparkConf().setMaster("local").setAppName("Sample");
+   
+   
+    
+     val sc = new SparkContext(conf);
+   val a = sc.textFile("C:/Users/nageswara.rao.dasari/Downloads/MOCK_DATA.csv");
+   val b = a.map(x => (x.split(",")(4),x.split(",")(2)))
+   b.collect().foreach(println)
+   
+   
+    /*val b = a.map(x => (x.split(",")(4),x.split(",")(2).toInt));
+    val c = b.reduceByKey((a,b) => (a+b))
+    c.saveAsTextFile("C:/Users/nageswara.rao.dasari/Downloads/MOCK_DATA2.txt")*/
+    
+    //val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    //val df = sqlContext.read.json("C:/Users/nageswara.rao.dasari/Downloads/MOCK_DATA.json")
+    //df.printSchema();
+     
+    
+  }
+}

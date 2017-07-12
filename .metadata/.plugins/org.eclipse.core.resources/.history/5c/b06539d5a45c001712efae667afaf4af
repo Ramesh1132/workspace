@@ -1,0 +1,83 @@
+package com.pgtest
+ import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+
+object DnormTable {
+ 
+
+  def main(args : Array[String]){
+ val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ val df1 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+ 
+ df1.registerTempTable("DimSurveyItem")
+ 
+ 
+ val df2 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItemResponse.csv");
+ 
+ df2.registerTempTable("DimSurveyItemResponse")
+ 
+ 
+ val df3 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimEDWSource.csv");
+ 
+ df3.registerTempTable("DimEDWSource")
+ 
+ 
+  val df4 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/dimclientfacility.csv");
+ 
+ df4.registerTempTable("dimclientfacility")
+ 
+ 
+ val df5 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/dimclientfacilitysite.csv");
+ 
+ df5.registerTempTable("dimclientfacilitysite")
+ 
+  val df6 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimClientFacilityUnit.csv");
+ 
+ df6.registerTempTable("DimClientFacilityUnit")
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+val a = sparksql.sql("select * from dimclientfacility limit 2")
+
+a.collect().foreach(println)
+  
+ 
+ 
+
+ }
+
+}

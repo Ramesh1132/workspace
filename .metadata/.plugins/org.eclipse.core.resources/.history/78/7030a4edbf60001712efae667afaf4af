@@ -1,0 +1,124 @@
+package com.pgtest
+ import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+
+object DnormTable {
+ 
+
+  def main(args : Array[String]){
+ val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ val df1 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+ 
+ df1.registerTempTable("DimSurveyItem")
+ 
+ 
+ val df2 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItemResponse.csv");
+ 
+ df2.registerTempTable("DimSurveyItemResponse")
+ 
+ 
+ val df3 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimEDWSource.csv");
+ 
+ df3.registerTempTable("DimEDWSource")
+ 
+ 
+  val df4 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/dimclientfacility.csv");
+ 
+ df4.registerTempTable("dimclientfacility")
+ 
+ 
+ val df5 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/dimclientfacilitysite.csv");
+ 
+ df5.registerTempTable("dimclientfacilitysite")
+ 
+  val df6 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimClientFacilityUnit.csv");
+ 
+ df6.registerTempTable("DimClientFacilityUnit")
+ 
+ 
+
+ 
+ 
+ 
+/* val jdbcSqlConnStr = "jdbc:sqlserver://10.200.14.151;databaseName=edwnorm;user=nageswara.rao.dasari;password=nag1234$$;"
+ 
+ 
+ val jdbcDbTable = "[dbo].[denormpxsurveyresponseAS]"
+ 
+ val jdbcDF = sqlContext.read.format("jdbc").options(
+Map("url" -&gt; jdbcSqlConnStr,
+"dbtable" -&gt; jdbcDbTable))
+   
+   // Testing for the JDBC Driver Class
+Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+
+// Define the credentials and parameters get_sqlserver_creds
+val (user, passwd) = ("nageswara.rao.dasari","")
+val hostname = "example.databricks.sqlserver.com"
+val dbName = "edwnorm"
+val jdbcPort = 1433
+
+val jdbcUrl = (s"jdbc:sqlserver://${hostname}:${jdbcPort};database=${dbName};user=${user};password=${passwd}")
+
+val driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+val connectionProperties = new java.util.Properties()
+connectionProperties.setProperty("Driver",driverClass)
+
+val a = sqlContext.read.jdbc(jdbcUrl, "diamonds_mysql", connectionProperties).explain(true)
+
+
+
+val jdbcDF = sqlContext.read
+      .format("jdbc")
+      .option("driver" , "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+      .option("url", "jdbc:mysql://<<>10.200.14.151>:3306/<<EDWNorm>>")
+      .option("dbtable", "(SELECT * FROM EDWNorm.[dbo].[dimsurvey] limit 10) tmp")
+      .option("user", "nageswara.rao.dasari")
+      .option("password", "nag1234$$")
+      .load()
+      
+     
+jdbcDF.collect().foreach(println)
+ */
+
+ 
+ 
+val a = sparksql.sql("select * from dimclientfacility limit 2")
+
+a.collect().foreach(println)
+  
+ 
+ 
+
+ }
+
+}

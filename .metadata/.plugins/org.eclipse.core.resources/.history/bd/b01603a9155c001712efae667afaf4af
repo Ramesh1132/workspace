@@ -1,0 +1,22 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+object SqlServerSparkConnection {
+  def main(args : Array[String]){
+ val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ 
+ val jdbcSqlConnStr = "jdbc:sqlserver://10.200.14.151;databaseName=edwnorm;user=nageswara.rao.dasari;password=nag1234$$;"
+ 
+ 
+ val jdbcTable = "[dbo].[denormpxsurveyresponseAS]"
+ 
+ val jdbcDF = sparksql.read.format("jdbc").options(
+Map("url" -&gt; jdbcSqlConnStr,
+"dbtable" -&gt; jdbcTable))
+ 
+  }
+}

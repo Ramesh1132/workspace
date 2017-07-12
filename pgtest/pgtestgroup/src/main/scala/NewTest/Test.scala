@@ -1,0 +1,44 @@
+package NewTest
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+object Test {
+  def main(args : Array[String]){
+  val conf = new SparkConf().setMaster("Local").setAppName("Test")
+ val sc = new SparkContext(conf)
+  val sqlcontext = new SQLContext(sc)
+  
+  //val a = sc.textFile("path", 5)
+ // val cars = sqlcontext.csvFile("cars.csv")
+  
+ /* val df = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/Users/nageswara.rao.dasari/Downloads/MOCK_DATA (2).csv"); 
+  
+   val df1 = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv"); */
+  
+ /* val df = spark.read
+        .format("csv")
+        .option("header", "true") //reading the headers
+        .option("mode", "DROPMALFORMED")
+        .csv("C:/dim/DimSurveyItem.csv")*/
+  val df1 = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+  
+
+  df1.printSchema()
+
+  
+  }
+}

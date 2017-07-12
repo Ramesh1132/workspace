@@ -1,0 +1,83 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+
+object SqlServerSparkConnection {
+  
+    val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ 
+  def main(args : Array[String]){
+    
+    val df = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimEDWSource.csv");
+ 
+ df.registerTempTable("dimedwsource")
+ 
+ 
+ val df1 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/denorm_as_with_demo_columnstore_as.csv");
+ 
+ df1.registerTempTable("denorm_as_with_demo_columnstore_as")
+ 
+ 
+ val df2 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimCustomItemGroup.csv");
+ 
+ df2.registerTempTable("DimCustomItemGroup")
+ 
+ val df3 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/FactSurveyResponsePXDemographic.csv");
+ 
+ df3.registerTempTable("FactSurveyResponsePXDemographic")
+ 
+ 
+ val df5 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+ 
+ df5.registerTempTable("DimSurveyItem")
+
+ val df4 = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/lkpSurveyItemCAHPSPhoneCalibration.csv");
+ 
+ df4.registerTempTable("lkpSurveyItemCAHPSPhoneCalibration")
+ 
+  val Service_table_as = sparksql.sql("select * from	denorm_as_with_demo_columnstore_as px left outer join DimCustomItemGroup ig on ig.SurveyItemKey=px.SurveyItemKey ")
+			
+		
+		
+		Service_table_as.registerTempTable("Service_table_as")
+		
+		
+		val CAHPS_only = sparksql.sql("select * from Service_table_as st LEFT OUTER JOIN lkpSurveyItemCAHPSPhoneCalibration calibr ON st.surveyitemkey = calibr.surveyitemkey AND st.PatientDischargeDateKey BETWEEN calibr.PatientDischargeStartDateKey AND calibr.PatientDischargeEndDateKey")
+ 
+//val a =  sparksql.sql("describe Service_table_as")
+    
+CAHPS_only.collect().foreach(println)
+ 
+
+ 
+  }
+}

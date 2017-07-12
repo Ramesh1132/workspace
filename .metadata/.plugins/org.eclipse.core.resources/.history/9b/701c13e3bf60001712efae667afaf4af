@@ -1,0 +1,23 @@
+package com.pgtest
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+
+case class Abc (Year:Int, ChickPrice: Float , BeefPrice:Float ,BeefConsump:Float,CPI:Float,DPI:Int,RealChickenPrice:Float,RealBeefPrice:Float,RealDPI: Float,RDPIMean:Float)
+object App {
+  
+   val conf = new SparkConf().setMaster("local[4]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+  
+  def main(args : Array[String]) {
+    val a = sc.textFile("C:/inputSpark/dataset1.txt")
+   // a.map(x => x.split("\t")).collect{
+   ///   case Array(Year, ChickPrice, BeefPrice,BeefConsump,CPI,DPI,RealChickenPrice,RealBeefPrice,RealDPI,RDPIMean) =>(Year, ChickPrice, BeefPrice ,BeefConsump,CPI,DPI,RealChickenPrice,RealBeefPrice,RealDPI,RDPIMean)
+  //  }
+  //  a.collect().foreach(println)
+  }
+
+}

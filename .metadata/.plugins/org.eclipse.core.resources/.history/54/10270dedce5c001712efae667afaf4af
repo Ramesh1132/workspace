@@ -1,0 +1,86 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+
+object SqlServerSparkConnection {
+  
+    val conf = new SparkConf().setMaster("local[2]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ 
+  def main(args : Array[String]){
+    
+    val dimedwsource = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimEDWSource.csv");
+ 
+ dimedwsource.registerTempTable("dimedwsource")
+ 
+ 
+ val denorm_as_with_demo_columnstore_as = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/denorm_as_with_demo_columnstore_as.csv");
+ 
+ denorm_as_with_demo_columnstore_as.registerTempTable("denorm_as_with_demo_columnstore_as")
+ 
+ 
+ val DimCustomItemGroup = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimCustomItemGroup.csv");
+ 
+ DimCustomItemGroup.registerTempTable("DimCustomItemGroup")
+ 
+ val FactSurveyResponsePXDemographic = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/FactSurveyResponsePXDemographic.csv");
+ 
+ FactSurveyResponsePXDemographic.registerTempTable("FactSurveyResponsePXDemographic")
+ 
+ 
+ val DimSurveyItem = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+ 
+ DimSurveyItem.registerTempTable("DimSurveyItem")
+
+ val lkpSurveyItemCAHPSPhoneCalibration = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/lkpSurveyItemCAHPSPhoneCalibration.csv");
+ 
+ lkpSurveyItemCAHPSPhoneCalibration.registerTempTable("lkpSurveyItemCAHPSPhoneCalibration")
+ 
+  val Service_table_as = sparksql.sql("select * from	denorm_as_with_demo_columnstore_as px left outer join DimCustomItemGroup ig on ig.SurveyItemKey=px.SurveyItemKey ")
+			
+		
+		
+		Service_table_as.registerTempTable("Service_table_as")
+		
+		
+		//val CAHPS_only = sparksql.sql("select * from Service_table_as LEFT OUTER JOIN lkpSurveyItemCAHPSPhoneCalibration calibr ON Service_table_as.surveyitemkey = calibr.surveyitemkey AND Service_table_as.PatientDischargeDateKey BETWEEN calibr.PatientDischargeStartDateKey AND calibr.PatientDischargeEndDateKey")
+ 
+//val a =  sparksql.sql("describe Service_table_as")
+    
+//CAHPS_only.collect().foreach(println)
+
+
+val a = denorm_as_with_demo_columnstore_as. join(DimCustomItemGroup,denorm_as_with_demo_columnstore_as("SurveyItemKey")===DimCustomItemGroup("SurveyItemKey"),"left_outer").join(lkpSurveyItemCAHPSPhoneCalibration,denorm_as_with_demo_columnstore_as("SurveyItemKey")===lkpSurveyItemCAHPSPhoneCalibration("SurveyItemKey"),"left_outer")	
+
+
+ a.collectAsList()
+  }
+}

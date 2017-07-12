@@ -1,0 +1,122 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.Seconds
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.log4j.{ Logger, Level }
+import com.datastax.spark.connector.cql.CassandraConnector
+import com.datastax.spark.connector.streaming._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import com.datastax.spark.connector._
+import com.datastax.spark.connector.rdd._
+import org.apache.spark.sql.cassandra._
+import com.datastax.spark.connector.cql.CassandraConnector
+import java.util.Date
+import org.apache.spark.sql._
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types.StructField
+import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types.DateType
+import org.apache.spark.sql.types.FloatType
+object MorColums {
+  
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.Seconds
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.log4j.{ Logger, Level }
+import com.datastax.spark.connector.cql.CassandraConnector
+import com.datastax.spark.connector.streaming._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import com.datastax.spark.connector._
+import com.datastax.spark.connector.rdd._
+import org.apache.spark.sql.cassandra._
+import com.datastax.spark.connector.cql.CassandraConnector
+import java.util.Date
+import org.apache.spark.sql._
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types.StructField
+import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types.DateType
+import org.apache.spark.sql.types.FloatType
+
+case class sample(id1: String, id2: String,id3: String,id4: String,id5: String,id6: String,id7: String,id8: String,id9: String,id10: String,id11: String,id12: String,id13: String,id14: String,id15: String,id16: String,id17: String,id18: String,id19: String,id20: String,id21: String,id22: String,id23: String,id24: String,id25: String)
+object Aggregation {
+  def main(args: Array[String]) {
+
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
+
+   
+    
+    val conf = new SparkConf().setMaster("local[*]").setAppName("KafkaReceiver").set("spark.driver.allowMultipleContexts", "true").set("spark.cassandra.connection.host", "localhost")
+    val sc = new SparkContext(conf);
+    val sqlContext = new SQLContext(sc);
+    //val ssc = new StreamingContext(conf, Seconds(5))
+
+    val messages = KafkaUtils.createStream(ssc, "localhost:2181", "spark-streaming-consumer-group", Map("nagesh" -> 1))
+
+   val rdd1 = messages.map(_._2) // split the message into lines
+   //.flatMap(_.split(",")) //split into words
+      .filter(w => (w.length() > 0))
+      .map(_.split(",")).map(z => (z(0), z(1), z(2), z(3), z(4), z(5), z(6)))
+    val rdd = rdd1.foreachRDD { rdd =>
+      val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
+      import sqlContext.implicits._
+      val wordsDataFrame = rdd.toDF("id", "f_name", "l_name", "email", "gender", "ip", "salary")
+      wordsDataFrame.registerTempTable("words")
+      val wordCountsDataFrame =
+        sqlContext.sql("select * from words");
+      wordCountsDataFrame.show()
+      rdd.saveToCassandra("test", "stream3", SomeColumns("Provider ID", "Address", "Hospital Name"))
+
+    }
+    
+     rdd1.foreachRDD(rdd => {
+      val sqlContext = SQLContext.getOrCreate(ssc.sparkContext)
+      import  sqlContext.implicits._
+
+      //rdd.foreach(println)
+
+      //val df = sqlContext.read.schema(schema).json(rdd)
+//val df = sqlContext.read.json(rdd)
+    //  df.registerTempTable("ubermon")
+      //val df2 = df.withColumn("sal", df("salary").cast(DateType))
+      //val df4 = sqlContext.sql("SELECT id, sal(df2.salary) as sal, first_name, last_name, email, gender, ip_address from ubermon")
+      //val df3 = sqlContext.sql("SELECT cid, date(ubermon.dt) as date, dt, lat, lon, clat, clon, base from ubermon")
+      //df2.registerTempTable("ubermon")
+      //println(df2.rdd.partitions.length)
+      //df2.write.mode(SaveMode.Append).format("org.apache.spark.sql.cassandra").options(Map( "table" -> "ubermonitor", "keyspace" -> "uber")).save()
+  // val df3 = sqlContext.sql("SELECT gender, salary from ubermon group by gendr")
+    // val df3 = sqlContext.sql("describe ubermon")
+   //  val df3 = sqlContext.sql("select * from ubermon")
+  // df3.collect().foreach(println)
+    //df.show();
+//df.printSchema()
+
+//df.groupBy("gender").count().show()
+//df.select( df("id") ).show()
+      
+     // val a =sqlContext.sql("SELECT gender, salary from ubermon" )
+
+//df.filter(df("id") < 5).show()
+     // df4.collect();
+    
+     //a.write.mode(SaveMode.Append).format("org.apache.spark.sql.cassandra").options(Map( "table" -> "jsondata", "keyspace" -> "test")).save()
+           })
+
+    ssc.start()
+    ssc.awaitTermination()
+
+  }
+
+}
+}

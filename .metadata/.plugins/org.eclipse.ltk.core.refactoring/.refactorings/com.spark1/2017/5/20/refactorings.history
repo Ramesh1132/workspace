@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Consumer.scala&apos; to &apos;pgtestgroup/src/main/scala/com.pgtest&apos;&#x0D;&#x0A;- Original project: &apos;com.spark1&apos;&#x0D;&#x0A;- Destination element: &apos;pgtestgroup/src/main/scala/com.pgtest&apos;&#x0D;&#x0A;- Original element: &apos;Consumer.scala&apos;" description="Copy file" destination="=pgtestgroup/src\/main\/scala&lt;com.pgtest" element1="src/test/scala/samples/Consumer.scala" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1494917761994" units="0" version="1.0"/>
+</session>

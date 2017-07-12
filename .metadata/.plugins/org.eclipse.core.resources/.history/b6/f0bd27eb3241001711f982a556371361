@@ -1,0 +1,35 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.Seconds
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka.KafkaUtils 
+import org.apache.log4j.{Logger,Level}
+import com.datastax.spark.connector.cql.CassandraConnector
+import com.datastax.spark.connector.streaming._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import com.datastax.spark.connector._
+import com.datastax.spark.connector.rdd._
+import org.apache.spark.sql.cassandra._
+import com.datastax.spark.connector.cql.CassandraConnector
+import java.util.Date
+import org.apache.spark.sql._
+import org.apache.spark.sql.SQLContext
+
+case class Person(id :String, first_name: String,last_name:String,email:String,gender: String,ip_address:String,salary:String)
+
+object Test {
+  def main(args : Array[String]){
+  
+    val conf = new SparkConf().setMaster("local[*]").setAppName("KafkaReceiver") .set("spark.driver.allowMultipleContexts", "true").set("spark.cassandra.connection.host","localhost")        
+val sc = new SparkContext(conf);
+    val sqlContext = new SQLContext(sc);
+//val ssc = new StreamingContext(conf, Seconds(5))
+import sqlContext.implicits._
+val people = sc.textFile("C:/MOCK_DATA 2.csv").map(_.split(","))
+people.map(p => Person(p(0), p(1),p(2),p(3),p(4),p(5),p(6))).toDF().registerTempTable("Ttable")
+
+ sqlContext.sql("select * from Ttable").show()
+}
+}

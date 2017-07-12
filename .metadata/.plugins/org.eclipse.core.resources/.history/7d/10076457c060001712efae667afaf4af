@@ -1,0 +1,58 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.Seconds
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka.KafkaUtils 
+import org.apache.log4j.{Logger,Level}
+import com.datastax.spark.connector.cql.CassandraConnector
+import com.datastax.spark.connector.streaming._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import com.datastax.spark.connector._
+import com.datastax.spark.connector.rdd._
+import org.apache.spark.sql.cassandra._
+import com.datastax.spark.connector.cql.CassandraConnector
+import java.util.Date
+import org.apache.spark.sql._
+import org.apache.spark.sql.SQLContext
+
+case class Person(id :String, first_name: String,last_name:String,email:String,gender: String,ip_address:String,salary:String)
+
+object Test {
+  def main(args : Array[String]){
+  val conf = new SparkConf().setMaster("Local[2]").setAppName("Test")
+ val sc = new SparkContext(conf)
+  val sqlcontext = new SQLContext(sc)
+  
+  //val a = sc.textFile("path", 5)
+ // val cars = sqlcontext.csvFile("cars.csv")
+  
+ /* val df = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/Users/nageswara.rao.dasari/Downloads/MOCK_DATA (2).csv"); 
+  
+   val df1 = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv"); */
+  
+ /* val df = spark.read
+        .format("csv")
+        .option("header", "true") //reading the headers
+        .option("mode", "DROPMALFORMED")
+        .csv("C:/dim/DimSurveyItem.csv")*/
+  val df1 = sqlcontext.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimSurveyItem.csv");
+  
+
+  df1.printSchema()
+
+  }
+}

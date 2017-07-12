@@ -1,0 +1,25 @@
+package com.pgtest
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+object Testing {
+  
+  
+    val conf = new SparkConf().setMaster("local[4]").setAppName("my app")
+    val sc = new SparkContext(conf);
+ val sparksql = new SQLContext(sc)
+ 
+ 
+  def main(args : Array[String]){
+   val dimedwsource = sparksql.read
+      .format("com.databricks.spark.csv")
+      .option("header", "true") 
+      .option("mode", "DROPMALFORMED")
+      .load("C:/dim/DimEDWSource.csv");
+ 
+ //dimedwsource.registerTempTable("dimedwsource")
+   
+   dimedwsource.count()
+}
+ 
+}
